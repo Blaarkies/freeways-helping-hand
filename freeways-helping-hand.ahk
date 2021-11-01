@@ -12,26 +12,63 @@ checkpoints := []
 t := 0
 path := []
 
+setupOverlaySystem()
+
 return
 
 ^q:: ExitApp, 200
+~w:: moveForward()
+~f:: moveFullPath()
+~e:: setCheckpoint()
+~r:: resetCheckpoints()
+~s:: adjustedLevel()
+~d:: displayPath()
 
-w:: moveForward()
+~1:: editCheckpoint(1)
+~2:: editCheckpoint(2)
+~3:: editCheckpoint(3)
+~4:: editCheckpoint(4)
 
-f:: moveFullPath()
+editCheckpoint(id) {
+    global checkpoints
 
-e:: setCheckpoint()
+    if (id <= checkpoints.MaxIndex()) {
+        updateCheckpoint(id)
+    } else {
+        overlayText("Checkpoint " id " does not exist")
+        SoundBeep, 200, 150
+    }
+}
 
-r:: resetCheckpoints()
+updateCheckpoint(id) {
+    global checkpoints, busy
 
-s:: adjustedLevel()
+    if (busy == 1) {
+        return
+    }
+    busy := 1
 
-setCheckpoint()
-{
-    global checkpoints, t
+    MouseGetPos, x, y
+    location := {x: x, y: y}
+
+    addCheckpoint(location, id)
+    overlayText("Update checkpoint " + id)
+
+    SoundBeep, 1500, 50
+    busy := 0
+}
+
+setCheckpoint() {
+    global checkpoints, busy, t
+
+    if (busy == 1) {
+        return
+    }
+    busy := 1
 
     if (checkpoints.MaxIndex() >= 4) {
         overlayText("Maximum checkpoints reached!")
+        busy := 0
         return
     }
 
@@ -43,36 +80,57 @@ setCheckpoint()
     MouseGetPos, x, y
     location := {x: x, y: y}
 
-    addCheckpoint(location)
+    addCheckpoint(location, 0)
 
     SoundBeep, 1000, 50
+    busy := 0
 }
 
-addCheckpoint(checkpoint) {
+addCheckpoint(checkpoint, id) {
     global checkpoints, path
 
-    checkpoints.Push(checkpoint)
+    if (id != 0) {
+        checkpoints[id] := checkpoint
+    } else {
+        checkpoints.Push(checkpoint)
+    }
     overlayText("Checkpoint " + checkpoints.MaxIndex())
+
+    drawCheckpointLabels(checkpoints)
 
     if (checkpoints.MaxIndex() < 2) {
         return
     }
 
     path := []
+    lowResPath := []
     Loop, 100 {
-        path.Push(getLerpLocation(checkpoints, A_Index * .01))
+        location := getLerpLocation(checkpoints, A_Index * .01)
+        path.Push(location)
+        if (mod(A_Index, 5) == 0 && A_Index != 0 && A_Index != 100) {
+            lowResPath.Push(location)
+        }
     }
+
+    drawPath(lowResPath)
 }
 
-moveForward()
-{
-    global checkpoints, t, path
-    stepSize := 0.03
+moveForward() {
+    global checkpoints, t, path, busy
+
+    if (busy == 1) {
+        return
+    }
+    busy := 1
 
     if (checkpoints.MaxIndex() <= 1) {
+        busy := 0
         return
     }
 
+    lineHide()
+
+    stepSize := 0.03
     if (t > 0) {
         t -= stepSize
     }
@@ -108,13 +166,20 @@ getCurrentIndex() {
     return Round(t * 100) + 1
 }
 
-moveFullPath()
-{
-    global checkpoints, t, path
+moveFullPath() {
+    global checkpoints, t, path, busy
 
-    if (checkpoints.MaxIndex() <= 1) {
+    if (busy == 1) {
         return
     }
+    busy := 1
+
+    if (checkpoints.MaxIndex() <= 1) {
+        busy := 0
+        return
+    }
+
+    lineHide()
 
     location := path[getCurrentIndex()]
     MouseMove, location.x, location.y
@@ -135,20 +200,23 @@ moveFullPath()
     MouseClick, , , , , , U
 
     resetCheckpoints()
-    Sleep, 200
+    busy := 0
 }
 
-resetCheckpoints()
-{
-    global checkpoints, t
+resetCheckpoints() {
+    global checkpoints, path, t, busy
+
     checkpoints := []
     t := 0
     path := []
+    busy := 0
+    drawCheckpointLabels([])
+    drawPath([])
+
     overlayText("Checkpoints reseted")
 }
 
-adjustedLevel()
-{
+adjustedLevel() {
     global path, t
 
     maxIndex := path.MaxIndex()

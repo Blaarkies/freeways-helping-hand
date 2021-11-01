@@ -27,7 +27,5 @@ lerp(a, b, t) {
 }
 
 distance(a, b) {
-    distance := Sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-
-    return distance
+    return Sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
 }
