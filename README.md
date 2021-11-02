@@ -4,6 +4,8 @@
 
 Checkout [Freeways](https://captaingames.itch.io/freeways), a game where you build roads, interchanges, and freeways by drawing on screen.
 
+![Demo](./storage/demo.gif?raw=true "A demo of the draw tool")
+
 This tool helps to draw smooth curves or very straight lines.
 
 ###### 4 Checkpoints can draw complex curves
@@ -33,9 +35,6 @@ Follow the same steps as drawing a line, but keep adding more checkpoints
 ###### 3 Checkpoints draw a curve
 ![A relay network](./storage/3-checkpoints.jpg?raw=true "A Quadratic Bezier Curve")
 
-### Draw a better curve
-The Cubic Bezier Curve provides more control over the start and end sections. This allows you to draw S-curves.
-
 ### More control
 
 | Key | Result |
@@ -46,5 +45,5 @@ The Cubic Bezier Curve provides more control over the start and end sections. Th
 | `E` | Add a checkpoint at mouse cursor location |
 | `R` | Reset list of checkpoints. Use this if you did not complete the previous drawing |
 | `S` | Set bridge-level adjustment. When using bridges in Freeways, the game will force a short section of road forwards (beyond where the script has drawn thus far). *Compensate for that difference with this hotkey everytime you click on the bridge up/down button.* |
-| `1 - 4` | Reposition specific checkpoint. |
+| `1 - 9` | Reposition specific checkpoint. |
 

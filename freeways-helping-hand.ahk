@@ -28,6 +28,12 @@ return
 ~2:: editCheckpoint(2)
 ~3:: editCheckpoint(3)
 ~4:: editCheckpoint(4)
+~5:: editCheckpoint(5)
+~6:: editCheckpoint(6)
+~7:: editCheckpoint(7)
+~8:: editCheckpoint(8)
+~9:: editCheckpoint(9)
+~0:: editCheckpoint(10)
 
 editCheckpoint(id) {
     global checkpoints
@@ -66,7 +72,7 @@ setCheckpoint() {
     }
     busy := 1
 
-    if (checkpoints.MaxIndex() >= 4) {
+    if (checkpoints.MaxIndex() >= 10) {
         overlayText("Maximum checkpoints reached!")
         busy := 0
         return
@@ -87,7 +93,12 @@ setCheckpoint() {
 }
 
 addCheckpoint(checkpoint, id) {
-    global checkpoints, path
+    global checkpoints, path, t
+
+    if (t != 0) {
+        resetCheckpoints()
+        lineHide()
+    }
 
     if (id != 0) {
         checkpoints[id] := checkpoint
@@ -105,7 +116,7 @@ addCheckpoint(checkpoint, id) {
     path := []
     lowResPath := []
     Loop, 100 {
-        location := getLerpLocation(checkpoints, A_Index * .01)
+        location := getBezierLerpLocation(checkpoints, A_Index * .01)
         path.Push(location)
         if (mod(A_Index, 5) == 0 && A_Index != 0 && A_Index != 100) {
             lowResPath.Push(location)
@@ -127,8 +138,6 @@ moveForward() {
         busy := 0
         return
     }
-
-    lineHide()
 
     stepSize := 0.03
     if (t > 0) {
@@ -153,12 +162,14 @@ moveForward() {
 
         if (t > (1 + stepSize)) {
             resetCheckpoints()
+            lineHide()
             Sleep, 200
             break
         }
     }
 
     MouseClick, , , , , , U
+    busy := 0
 }
 
 getCurrentIndex() {
@@ -178,8 +189,6 @@ moveFullPath() {
         busy := 0
         return
     }
-
-    lineHide()
 
     location := path[getCurrentIndex()]
     MouseMove, location.x, location.y
@@ -201,6 +210,7 @@ moveFullPath() {
 
     resetCheckpoints()
     busy := 0
+    lineHide()
 }
 
 resetCheckpoints() {

@@ -1,23 +1,35 @@
-﻿getLerpLocation(checkpoints, t) {
-    if (checkpoints.MaxIndex() == 3) {
-        lerpA := lerp(checkpoints[1], checkpoints[2], t)
-        lerpB := lerp(checkpoints[2], checkpoints[3], t)
+﻿getBezierLerpLocation(points, t) {
+    return iterativeLerping(points, t)
+}
 
-        location := lerp(lerpA, lerpB, t)
-    } else if (checkpoints.MaxIndex() == 4) {
-        lerpA := lerp(checkpoints[1], checkpoints[2], t)
-        lerpB := lerp(checkpoints[2], checkpoints[3], t)
-        lerpC := lerp(checkpoints[3], checkpoints[4], t)
+iterativeLerping(points, t) {
+    edges := arrayWindowed(points)
+    Loop, 999 { ; infinite loop 'break' not working. numbered loop fixes it
+        newPoints := []
+        for key, edge in edges {
+            newPoints.Push(lerp(edge[1], edge[2], t))
+        }
 
-        lerpD := lerp(lerpA, lerpB, t)
-        lerpE := lerp(lerpB, lerpC, t)
-
-        location := lerp(lerpD, lerpE, t)
-    } else {
-        location := lerp(checkpoints[1], checkpoints[2], t)
+        newPointsCount := newPoints.MaxIndex()
+        if (newPointsCount >= 2) {
+            edges := arrayWindowed(newPoints)
+        } else {
+            edges := []
+            result := newPoints[1]
+            break
+        }
     }
 
-    return location
+    return result
+}
+
+arrayWindowed(list) {
+    result := []
+    Loop, % list.MaxIndex() - 1 {
+        result.Push([list[A_Index], list[A_Index + 1]])
+    }
+
+    return result
 }
 
 lerp(a, b, t) {

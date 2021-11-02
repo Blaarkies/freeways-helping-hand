@@ -20,7 +20,7 @@ setupOverlaySystem() {
     Gui, guiCurve:New, +Owner +AlwaysOnTop -Resize -SysMenu -MinimizeBox -MaximizeBox -Disabled -Caption -Border -ToolWindow +E0x20
     Gui, guiCurve:Color, % backgroundColor
 
-    Gui, guiCurve:-Caption +ToolWindow +AlwaysOnTop +LastFound ;for transparency to work
+    Gui, guiCurve:-Caption +ToolWindow +AlwaysOnTop +LastFound +E0x20 ;for transparency to work
     Gui, guiCurve:Show, x0 y0
     Gui, guiCurve:Maximize
 
