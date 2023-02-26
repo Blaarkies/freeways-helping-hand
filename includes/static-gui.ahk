@@ -36,16 +36,14 @@ declareGlobal(angelic) {
 drawCheckpointLabels(points) {
     global guiCurve, checkpointLabels
 
-    Loop, % checkpointLabels.MaxIndex() {
-        declareGlobal(checkpointLabels[A_Index])
+    for key, label in checkpointLabels {
+        declareGlobal(label)
     }
 
     Gui, guiCurve:Font, cDDFFDD s16 w700, Arial
 
     labelsCount := checkpointLabels.MaxIndex()
-    Loop, % points.MaxIndex() {
-        location := points[A_Index]
-
+    for key, location in points {
         if (A_Index > labelsCount) {
             newLabel := "checkpointLabel" + A_Index
             checkpointLabels.Push(newLabel)
@@ -71,18 +69,16 @@ drawPath(points) {
     global guiCurve, pathLabels
 
     if (!points.MaxIndex()) {
-        Loop, % pathLabels.MaxIndex() {
+        for key, label in pathLabels {
             ; Hide label off screen
-            GuiControl, guiCurve:MoveDraw, % pathLabels[A_Index], x-100 y-100
+            GuiControl, guiCurve:MoveDraw, % label, x-100 y-100
         }
     }
 
     Gui, guiCurve:Font, cDDFFDD s16 w700, Arial
 
     labelsCount := pathLabels.MaxIndex()
-    Loop, % points.MaxIndex() {
-        location := points[A_Index]
-
+    for key, location in points {
         if (A_Index > labelsCount) {
             newLabel := "pathLabel" + A_Index
             pathLabels.Push(newLabel)
